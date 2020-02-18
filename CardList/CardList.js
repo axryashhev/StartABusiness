@@ -1,7 +1,15 @@
 import React from 'react';
-import {View, Text, FlatList, Animated, Dimensions} from 'react-native';
+import {
+  Text,
+  FlatList,
+  Animated,
+  Dimensions,
+  ImageBackground,
+  Linking,
+} from 'react-native';
 import PropTypes from 'prop-types';
 import {ItemCard} from './ItemCard';
+import SearchBar from 'react-native-search-bar';
 
 export class CardList extends React.Component {
   static propTypes = {
@@ -12,7 +20,8 @@ export class CardList extends React.Component {
         id: PropTypes.string,
         title: PropTypes.string,
         picture: PropTypes.any,
-        content: PropTypes.element,
+        content: PropTypes.func,
+        record: PropTypes.number,
       }),
     ),
 
@@ -33,9 +42,11 @@ export class CardList extends React.Component {
     super(props);
 
     this.state = {
+      data: this.props.cards,
       selected: new Map(),
       zoomedStyle: {},
       maxHeight: 400,
+      // isScrollingList: true
       zoomAnim: new Animated.Value(1),
     };
   }
@@ -47,43 +58,11 @@ export class CardList extends React.Component {
       return;
     }
 
-    this.setState(state => {
-      if (state.selected.get(item.id)) {
-        return state;
-      }
-
-      this.state.selected = new Map();
-      this.state.selected.set(item.id, true);
-
-      this._flatList.scrollToIndex({animated: true, index});
-
-      let windowWidth = Dimensions.get('window').width;
-      let windowHeight = Dimensions.get('window').height;
-
-      let viewWidth = this._layouts.get(item.id).width;
-      let viewHeight = this._layouts.get(item.id).height;
-
-      let scale = windowWidth / viewWidth;
-
-      //let maxHeight = windowHeight / scale;
-      let maxHeight = 1000;
-      Animated.timing(this.state.zoomAnim, {
-        toValue: scale,
-        duration: this.props.duration,
-      }).start();
-
-      return {
-        ...state,
-        selected: this.state.selected,
-        zoomedStyle: {
-          transform: [
-            {scale: this.state.zoomAnim},
-            {translateY: viewWidth * 0.5 * (scale - 1)},
-          ],
-        },
-        maxHeight: maxHeight,
-      };
-    });
+    if (item.content !== null) {
+      item.content();
+    } else {
+      Linking.openURL('https://www.youtube.com/watch?v=xcPqMiAdX60');
+    }
   };
 
   _onCloseItem = ({item, index}) => {
@@ -125,16 +104,64 @@ export class CardList extends React.Component {
           style={[
             {
               flex: 1,
-              backgroundColor: 'white',
             },
             this.props.listStyle,
           ]}
-          data={this.props.cards}
+          data={this.state.data}
           scrollEnabled={true}
+          // onScrollBeginDrag={() => this.setState({isScrollingList: true})}
           keyExtractor={this._keyExtractor}
           renderItem={this._renderItem}
+          extraData={this.props.cards}
+          // stickyHeaderIndices={[0]}
+          ListHeaderComponent={this._renderHeader()}
         />
       </Animated.View>
     );
+  }
+
+  /* Поиск камер */
+  searchFilterFunction(text) {
+    if (isFinite(text) && text !== '' && text <= this.props.cards.length) {
+      let list = [];
+
+      for (let i = 0; i < parseInt(text); i++) {
+        list.push(this.props.cards[i]);
+      }
+
+      this.setState({
+        data: list,
+      });
+    } else {
+      const newData = this.props.cards.filter(item => {
+        const itemData = `${item.title.toUpperCase()}`;
+
+        const textData = text.toUpperCase();
+
+        return itemData.startsWith(textData);
+      });
+
+      if (!newData.length) {
+        let list = [];
+
+        this.setState({data: list});
+      }
+    }
+  }
+
+  _renderHeader() {
+    // if (this.state.isScrollingList === true) {
+    /* return (
+      <SearchBar
+        textFieldBackgroundColor="#615772"
+        placeholder="Введите название камеры"
+        onChangeText={text => this.searchFilterFunction(text)}
+        autoCorrect={false}
+        value={this.state.value}
+      />
+    ); */
+    /* } else {
+      return null;
+    } */
   }
 }

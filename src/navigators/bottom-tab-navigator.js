@@ -2,6 +2,7 @@ import React from 'react';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {createBottomTabNavigator} from 'react-navigation-tabs';
 import {
+  EntityNavigator,
   HomeNavigator,
   ProfileNavigator,
   SearchNavigator,
@@ -24,6 +25,7 @@ const getTabBarIcon = (navigation, focused, tintColor) => {
 const BottomTabNavigator = createBottomTabNavigator(
   {
     Home: HomeNavigator,
+    // Entity: EntityNavigator,
     Profile: ProfileNavigator,
     Search: SearchNavigator,
   },

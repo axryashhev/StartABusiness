@@ -4,13 +4,20 @@ import {
   TouchableOpacity,
   ImageBackground,
   Text,
+  Image,
   View,
   StyleSheet,
   TouchableWithoutFeedback,
+  Dimensions,
+  TouchableHighlight,
+  Linking,
 } from 'react-native';
 import PropTypes from 'prop-types';
 
 export class ItemCard extends React.Component {
+  static navigationOptions = {
+    header: null,
+  };
   static propTypes = {
     title: PropTypes.string.isRequired,
     picture: PropTypes.any.isRequired,
@@ -33,7 +40,7 @@ export class ItemCard extends React.Component {
 
     closeIcon: PropTypes.element,
 
-    content: PropTypes.element,
+    content: PropTypes.func,
   };
 
   constructor(props) {
@@ -50,22 +57,14 @@ export class ItemCard extends React.Component {
     if (this.props.selected) {
       return;
     }
-
-    Animated.timing(this.state.scaleAnim, {
-      toValue: this.props.shrinkTo || 0.96,
-      duration: this.props.shrinkDuration || 200,
-    }).start();
   };
+
+  onPressUrl() {}
 
   _onPressOut = () => {
     if (this.props.selected) {
       return;
     }
-
-    Animated.timing(this.state.scaleAnim, {
-      toValue: 1,
-      duration: this.props.shrinkDuration || 200,
-    }).start();
   };
 
   componentWillReceiveProps(nextProps) {
@@ -85,6 +84,7 @@ export class ItemCard extends React.Component {
   }
 
   render() {
+    const screenWidth = Dimensions.get('window').width;
     return (
       <TouchableOpacity
         activeOpacity={this.props.activeOpacity || 0.8}
@@ -105,21 +105,51 @@ export class ItemCard extends React.Component {
           ]}>
           <ImageBackground
             onLayout={this.props.onLayout}
-            borderRadius={
-              this.props.selected ? 0 : this.props.borderRadius || 10
-            }
+            borderRadius={this.props.selected ? 0 : 0}
             source={this.props.picture}
-            style={[styles.image, {height: this.props.height || 200}]}>
-            <Text style={[styles.text, this.props.textStyle]}>
-              {this.props.title}
-            </Text>
+            style={[
+              styles.image,
+              {height: this.props.height || 200, width: screenWidth},
+            ]}>
+            {this.props.title !== '' ? (
+              <ImageBackground
+                style={{
+                  height: 38,
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  flex: 1,
+                }}
+                resizeMode="stretch"
+                source={require('../Resources/Images/background_card_text.png')}>
+                <View
+                  style={{
+                    position: 'relative',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                  }}>
+                  <Text
+                    style={[
+                      styles.text,
+                      this.props.textStyle,
+                      {
+                        fontFamily: 'MyriadPro-SemiCond',
+                        color: 'black',
+                        fontSize: 16,
+                      },
+                    ]}>
+                    {this.props.title}
+                  </Text>
+                </View>
+              </ImageBackground>
+            ) : null}
             {this.props.selected ? (
               <TouchableWithoutFeedback onPress={this.props.onClose}>
                 <View
                   style={{
                     position: 'absolute',
-                    top: 26,
+                    top: 125,
                     right: 26,
+                    backgroundColor: '#ffffff',
                   }}>
                   {this.props.closeIcon || <Text>X</Text>}
                 </View>
@@ -127,11 +157,7 @@ export class ItemCard extends React.Component {
             ) : null}
           </ImageBackground>
 
-          {this.props.selected ? (
-            <View style={{flex: 1, padding: 20}}>
-              {this.props.content || <Text>COntent!</Text>}
-            </View>
-          ) : null}
+          {this.props.selected ? this.props.content : null}
         </Animated.View>
       </TouchableOpacity>
     );
@@ -143,21 +169,32 @@ const styles = StyleSheet.create({
     flex: 1,
     borderRadius: 10,
     backgroundColor: 'rgb(240, 240, 240)',
-    margin: 20,
     padding: 0,
   },
   image: {
     width: undefined,
     height: 200,
-    padding: 20,
     margin: 0,
     flexDirection: 'row',
     alignItems: 'flex-end',
   },
+  buttonPlay: {
+    backgroundColor: '#00b5ec',
+    height: 45,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 20,
+    width: 250,
+    borderRadius: 30,
+  },
   text: {
     backgroundColor: 'transparent',
     color: 'white',
-    fontWeight: '700',
-    fontSize: 24,
+    // fontWeight: '700',
+    fontSize: 16,
+  },
+  closeButton: {
+    backgroundColor: '#ffffff',
   },
 });
