@@ -29,13 +29,13 @@ export default class HomeScreen extends React.Component {
       },
       {
         id: '2',
-        title: 'Физическое лицо',
+        title: 'Самозанятой',
         picture: require('../../Resources/Images/StockSnap_OOZGCFXSSP.jpg'),
         content: () => this.props.navigation.navigate('Individual'),
       },
       {
         id: '3',
-        title: 'Самозанятой',
+        title: 'Физическое лицо',
         picture: require('../../Resources/Images/StockSnap_XDR3CTDZ1H.jpg'),
         content: null,
       },

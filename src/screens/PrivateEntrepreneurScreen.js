@@ -1,4 +1,14 @@
-import {View, Text, StyleSheet} from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  Image,
+  TouchableOpacity,
+  ScrollView,
+  FlatList,
+  Dimensions,
+  Linking,
+} from 'react-native';
 import React, {Component} from 'react';
 import {MenuButton, Logo} from '../components/header/header';
 import {CardList} from '../../CardList/CardList';
@@ -19,7 +29,7 @@ export default class PrivateEntrepreneurScreen extends React.Component {
         id: '0',
         title: 'Регистрация',
         picture: require('../../Resources/Images/StockSnap_42H3JH8QI5.jpg'),
-        content: () => null,
+        content: null,
       },
       {
         id: '1',
@@ -42,7 +52,37 @@ export default class PrivateEntrepreneurScreen extends React.Component {
     ];
     return (
       <View style={styles.MainContainer}>
-        <CardList cards={cards} />
+        <FlatList
+          data={cards}
+          renderItem={({item, index}) => (
+            <View
+              style={{
+                flex: 1,
+                flexDirection: 'column',
+                alignItems: 'center',
+                margin: 1,
+                borderRadius: 5,
+                borderWidth: 1,
+                borderColor: '#000',
+              }}>
+              <TouchableOpacity
+                key={index}
+                style={{
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                }}
+                onPress={() =>
+                  Linking.openURL('https://www.youtube.com/watch?v=xcPqMiAdX60')
+                }>
+                <Image style={styles.imageThumbnail} source={item.picture} />
+                <Text style={styles.itemTitle}>{item.title}</Text>
+              </TouchableOpacity>
+            </View>
+          )}
+          //Setting the number of column
+          numColumns={2}
+          keyExtractor={(item, index) => index.toString()}
+        />
       </View>
     );
   }
@@ -50,9 +90,17 @@ export default class PrivateEntrepreneurScreen extends React.Component {
 
 const styles = StyleSheet.create({
   MainContainer: {
+    justifyContent: 'center',
     flex: 1,
+  },
+  itemTitle: {
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#F5FCFF',
+  },
+  imageThumbnail: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    height: 200,
+    padding: 10,
   },
 });

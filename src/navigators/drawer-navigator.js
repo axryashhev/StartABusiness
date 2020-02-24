@@ -8,16 +8,17 @@ import {
   PrivateEntrepreneurNavigator,
   SettingsNavigator,
 } from './screen-stack-navigators';
+import screen_info from '../screens/screen_info';
 
 const DrawerNavigator = createDrawerNavigator({
   /*To have a header on the drawer screens,
         there must be a navigator that includes the screen you want to add to the drawer navigator.
         See 'screen-stack-navigator' file*/
-  Home: BottomTabNavigator,
-  Entity: EntityNavigator,
-  PrivateEntrepreneur: PrivateEntrepreneurNavigator,
+  'Начать бизнес': BottomTabNavigator,
+  'Юридическое лицо': EntityNavigator,
+  'Индивидуальный предприниматель': PrivateEntrepreneurNavigator,
+  'Физическое лицо': IndividualNavigator,
   Settings: SettingsNavigator,
-  Individual: IndividualNavigator,
 });
 
 const Drawer = createAppContainer(DrawerNavigator);
